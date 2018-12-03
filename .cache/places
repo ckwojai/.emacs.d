@@ -1,0 +1,8 @@
+;;; -*- coding: utf-8 -*-
+(("/Users/wilsonchang/"
+  (dired-filename . "/Users/wilsonchang/.ssh"))
+ ("/Users/wilsonchang/.ssh/"
+  (dired-filename . "/Users/wilsonchang/.ssh/config"))
+ ("/Users/wilsonchang/.emacs.d/.cache/recentf" . 332)
+ ("/Users/wilsonchang/.emacs.d/.cache/layouts/persp-auto-save" . 2375)
+ ("/Users/wilsonchang/Desktop/UReact/ReduxSimpleStarter-master/src/index.js" . 4))

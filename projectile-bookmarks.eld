@@ -1,0 +1,1 @@
+("~/.emacs.d/" "~/Documents/Sony Project/SP_code/" "~/Desktop/Sony Project/SP_code/" "~/Documents/Web Development/WDBootcamp/YelpCamp/" "~/Desktop/UReact/Book/" "~/Desktop/upload/frontend/" "~/Desktop/UAdvReact/auth/client/" "~/Documents/UCLA/Andrew Personal Statement/" "~/Desktop/UReact/Weather/" "~/Desktop/UReact/ReduxSimpleStarter/")
