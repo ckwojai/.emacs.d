@@ -3,8 +3,19 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+		LaTeX-insert-left-brace
+		TeX-insert-backslash
+		c-electric-brace
+		c-electric-colon
+		c-electric-delete-forward
+		c-electric-lt-gt
+		org-beginning-of-line
+		org-cycle
 		org-delete-char
+		org-end-of-line
+		org-return
 		org-self-insert-command
+		org-yank
 		rjsx-delete-creates-full-tag
 		))
 

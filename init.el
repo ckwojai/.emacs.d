@@ -68,10 +68,26 @@
 ;;   :config
 ;;   (linum-relative-global-mode)
 ;;   )
+;; (use-package powerline
+;;   :config
+;;   (powerline-center-evil-theme)
+;;   )
+;; (use-package color-theme-sanityinc-tomorrow)
+;; (use-package dracula-theme)
+(use-package spacemacs-theme
+  :defer t
+  :init (load-theme 'spacemacs-dark t))
 
+;; (use-package smart-mode-line-powerline-theme
+;;    :ensure t
+;;    :after powerline
+;;    :after smart-mode-line
+;;    :config
+;;     (sml/setup)
+;;     (sml/apply-theme 'powerline)
+;; )
 (use-package org :ensure org-plus-contrib :pin org)
-(use-package color-theme-sanityinc-tomorrow)
-(use-package dracula-theme)
+
 (use-package avy
   :config
   (avy-setup-default)
@@ -82,9 +98,11 @@
   (defalias 'evil-insert-state 'evil-emacs-state)
   ;; :bind ("M-i" . evil-normal-state)
   (key-chord-define-global "fd" 'evil-normal-state)
-  (evil-mode 1)  
+  (evil-mode 1)
   ;; (define-key key-translation-map (kbd "ESC") (kbd "M-i"))
-  ;; :bind ("<ESC>" . evil-normal-state)
+  :bind (
+		 ("<escape>" . evil-normal-state)
+		 )
   )
 (use-package helm
   :bind (("M-x" . helm-M-x)
@@ -285,18 +303,88 @@
  '(ansi-color-names-vector
    (vector "#373b41" "#cc6666" "#b5bd68" "#f0c674" "#81a2be" "#b294bb" "#8abeb7" "#c5c8c6"))
  '(beacon-color "#cc6666")
- '(custom-enabled-themes (quote (dracula)))
+ '(custom-enabled-themes (quote (spacemacs-dark)))
  '(custom-safe-themes
    (quote
-	("233bb646e100bda00c0af26afe7ab563ef118b9d685f1ac3ca5387856674285d" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default)))
+	("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "b9e9ba5aeedcc5ba8be99f1cc9301f6679912910ff92fdf7980929c2fc83ab4d" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" "233bb646e100bda00c0af26afe7ab563ef118b9d685f1ac3ca5387856674285d" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default)))
  '(esv-key "c3b0d636e138cd80cff4b2f2f055a70cb9fb3fb9")
  '(fci-rule-color "#373b41")
  '(flycheck-color-mode-line-face-to-color (quote mode-line-buffer-id))
  '(frame-background-mode (quote dark))
  '(indent-tabs-mode t)
  '(org-icalendar-include-todo (quote all))
- '(package-selected-packages (quote (pdf-tools auctex)))
+ '(package-selected-packages
+   (quote
+	(powerline powerline-evil sml-mode pdf-tools auctex)))
  '(pdf-view-incompatible-modes nil)
+ '(sml/mode-width
+   (if
+	   (eq
+		(powerline-current-separator)
+		(quote arrow))
+	   (quote right)
+	 (quote full)))
+ '(sml/pos-id-separator
+   (quote
+	(""
+	 (:propertize " " face powerline-active1)
+	 (:eval
+	  (propertize " "
+				  (quote display)
+				  (funcall
+				   (intern
+					(format "powerline-%s-%s"
+							(powerline-current-separator)
+							(car powerline-default-separator-dir)))
+				   (quote powerline-active1)
+				   (quote powerline-active2))))
+	 (:propertize " " face powerline-active2))))
+ '(sml/pos-minor-modes-separator
+   (quote
+	(""
+	 (:propertize " " face powerline-active1)
+	 (:eval
+	  (propertize " "
+				  (quote display)
+				  (funcall
+				   (intern
+					(format "powerline-%s-%s"
+							(powerline-current-separator)
+							(cdr powerline-default-separator-dir)))
+				   (quote powerline-active1)
+				   (quote sml/global))))
+	 (:propertize " " face sml/global))))
+ '(sml/pre-id-separator
+   (quote
+	(""
+	 (:propertize " " face sml/global)
+	 (:eval
+	  (propertize " "
+				  (quote display)
+				  (funcall
+				   (intern
+					(format "powerline-%s-%s"
+							(powerline-current-separator)
+							(car powerline-default-separator-dir)))
+				   (quote sml/global)
+				   (quote powerline-active1))))
+	 (:propertize " " face powerline-active1))))
+ '(sml/pre-minor-modes-separator
+   (quote
+	(""
+	 (:propertize " " face powerline-active2)
+	 (:eval
+	  (propertize " "
+				  (quote display)
+				  (funcall
+				   (intern
+					(format "powerline-%s-%s"
+							(powerline-current-separator)
+							(cdr powerline-default-separator-dir)))
+				   (quote powerline-active2)
+				   (quote powerline-active1))))
+	 (:propertize " " face powerline-active1))))
+ '(sml/pre-modes-separator (propertize " " (quote face) (quote sml/modes)))
  '(tab-width 4)
  '(tramp-default-host "192.241.224.44" nil (tramp))
  '(tramp-default-method "ssh" nil (tramp))

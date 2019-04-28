@@ -1,9 +1,9 @@
-;; -*- emacs-lisp -*- <18/11/26 21:27:38 /Users/kinchang/.emacs.d/tramp>
+;; -*- emacs-lisp -*- <19/03/06 21:48:37 /Users/kinchang/.emacs.d/tramp>
 ;; Tramp connection history.  Don't change this file.
 ;; You can delete it, forcing Tramp to reapply the checks.
 
 (((tramp-file-name "ssh" "kinc" nil "192.241.224.44" nil nil nil)
-  ("uname" "Linux 4.4.0-116-generic")
+  ("uname" "Linux 4.4.0-141-generic")
   ("locale" "LC_ALL=en_US.utf8")
   ("test" "test")
   ("remote-path"
@@ -19,11 +19,9 @@
   ("gid-integer" 1000)
   ("gid-string" "kinc")
   ("case-insensitive" nil)
+  ("readlink" "\\readlink")
   ("ls" "/bin/ls --color=never")
   ("ls-quoting-style" t)
   ("ls-dired" t)
-  ("readlink" "\\readlink")
-  ("uid-integer" 1000)
-  ("tmpdir" "/ssh:kinc@192.241.224.44:/tmp")
-  ("touch-t" t)
-  ("touch" "\\touch")))
+  ("git" "\\git")
+  ("env-u-option" t)))
