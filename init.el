@@ -49,60 +49,39 @@
   (menu-bar-mode -1)
   (toggle-scroll-bar -1)
   (tool-bar-mode -1)
-  (toggle-frame-maximized)  
+  (toggle-frame-maximized)
   (setq tab-width 4)
   )
-
 ;; ===================================================
 ;; BASIC UTILITIES
 ;; ===================================================
-;; (use-package smart-mode-line-powerline-theme
-;;    :ensure t
-;;    :after powerline
-;;    :after smart-mode-line
-;;    :config
-;;     (sml/setup)
-;;     (sml/apply-theme 'powerline)
-;; )
-;; (use-package linum-relative
-;;   :config
-;;   (linum-relative-global-mode)
-;;   )
-;; (use-package powerline
-;;   :config
-;;   (powerline-center-evil-theme)
-;;   )
-;; (use-package color-theme-sanityinc-tomorrow)
-;; (use-package dracula-theme)
+(use-package moody
+  :config
+  (moody-replace-mode-line-buffer-identification)
+  (moody-replace-vc-mode)
+  )
+(use-package linum-relative
+  :config
+  (setq linum-relative-backend 'display-line-numbers-mode)
+  (message "turning on linum-relaive-mode")
+  (linum-relative-global-mode)
+  )
+(use-package color-theme-sanityinc-tomorrow)
 (use-package spacemacs-theme
   :defer t
-  :init (load-theme 'spacemacs-dark t))
-
-;; (use-package smart-mode-line-powerline-theme
-;;    :ensure t
-;;    :after powerline
-;;    :after smart-mode-line
-;;    :config
-;;     (sml/setup)
-;;     (sml/apply-theme 'powerline)
-;; )
-(use-package org :ensure org-plus-contrib :pin org)
-
-(use-package avy
   :config
-  (avy-setup-default)
-  (key-chord-define-global "jk" 'avy-goto-char)  
+  (load-theme 'spacemacs-dark t)
   )
+
+(use-package org :ensure org-plus-contrib :pin org)
 (use-package evil
   :config
-  (defalias 'evil-insert-state 'evil-emacs-state)
-  ;; :bind ("M-i" . evil-normal-state)
-  (key-chord-define-global "fd" 'evil-normal-state)
   (evil-mode 1)
-  ;; (define-key key-translation-map (kbd "ESC") (kbd "M-i"))
-  :bind (
-		 ("<escape>" . evil-normal-state)
-		 )
+  ;; Insert Mode with Emacs keybinding
+  (setcdr evil-insert-state-map nil)
+  (define-key evil-insert-state-map
+	(read-kbd-macro evil-toggle-key) 'evil-normal-state)
+  (define-key evil-insert-state-map [escape] 'evil-normal-state)
   )
 (use-package helm
   :bind (("M-x" . helm-M-x)
@@ -154,7 +133,7 @@
 				(append flycheck-disabled-checkers
 						'(javascript-jshint)))
   ;; use eslint with web-mode for jsx files
-  (flycheck-add-mode 'javascript-eslint 'rjsx-mode)  
+  (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
   )
 (use-package projectile
   :config
