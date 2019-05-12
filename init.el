@@ -55,18 +55,26 @@
 ;; ===================================================
 ;; BASIC UTILITIES
 ;; ===================================================
+(setq backup-directory-alist '(("." . "~/emacs_backup")))
+(delete-selection-mode 1)
+(use-package highlight-indent-guides
+  :config
+  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+  (setq highlight-indent-guides-method 'column)
+  (setq highlight-indent-guides-responsive 'top)
+  )
 (use-package moody
   :config
   (moody-replace-mode-line-buffer-identification)
   (moody-replace-vc-mode)
   )
-(use-package linum-relative
-  :config
-  (setq linum-relative-backend 'display-line-numbers-mode)
-  (message "turning on linum-relaive-mode")
-  (linum-relative-global-mode)
-  )
-(use-package color-theme-sanityinc-tomorrow)
+(use-package nlinum-relative
+    :config
+    (nlinum-relative-setup-evil)
+	(add-hook 'after-init-hook 'global-nlinum-relative-mode)
+	(setq nlinum-relative-current-symbol "->")
+    ;; (add-hook 'prog-mode-hook 'nlinum-relative-mode)
+	)
 (use-package spacemacs-theme
   :defer t
   :config
@@ -74,6 +82,7 @@
   )
 
 (use-package org :ensure org-plus-contrib :pin org)
+;; Evil Set Up
 (use-package evil
   :config
   (evil-mode 1)
@@ -83,6 +92,14 @@
 	(read-kbd-macro evil-toggle-key) 'evil-normal-state)
   (define-key evil-insert-state-map [escape] 'evil-normal-state)
   )
+(use-package vi-tilde-fringe
+  :config
+  (global-vi-tilde-fringe-mode)
+)
+(use-package evil-surround
+  :ensure t
+  :config
+  (global-evil-surround-mode 1))
 (use-package helm
   :bind (("M-x" . helm-M-x)
 		 ("C-x r b" . helm-filtered-bookmarks)
@@ -104,19 +121,27 @@
   )
 (use-package company
   :config
+  (setq company-minimum-prefix-length 1)
   (add-hook 'after-init-hook 'global-company-mode)
   (use-package company-auctex)
-  (use-package company-tern
-    :config
-    (add-to-list 'company-backends 'company-tern)
-    )
   (company-auctex-init)
+  (setq company-show-numbers t)
+  (setq company-tooltip-align-annotations t)
+  ;; invert the navigation direction if the the completion popup-isearch-match
+  ;; is displayed on top (happens near the bottom of windows)
+  (setq company-tooltip-flip-when-above t)
+  (global-company-mode)
   )
-(use-package key-chord
-  :config
-  (key-chord-mode 1)
+(use-package company-quickhelp
+  :ensure t
+  :init
+  (company-quickhelp-mode 1)
+  (use-package pos-tip
+    :ensure t))
 
-  )
+;; (use-package key-chord
+;;   :config (key-chord-mode 1)
+;;   )
 (use-package multiple-cursors
   :bind (("C->" . mc/mark-next-like-this)
 		 ("C-<" . mc/mark-all-like-this)
@@ -128,12 +153,7 @@
 (use-package flycheck
   :config
   (global-flycheck-mode)
-  ;; disable jshint since we prefer eslint checking
-  (setq-default flycheck-disabled-checkers
-				(append flycheck-disabled-checkers
-						'(javascript-jshint)))
-  ;; use eslint with web-mode for jsx files
-  (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
+
   )
 (use-package projectile
   :config
@@ -169,24 +189,186 @@
   :hook ((js-mode python-mode c++-mode TeX-mode) . smartparens-mode)
   )
 ;; ===================================================
+;; Org TODO and Agneda
+;; ===================================================
+(setq org-agenda-files (list "~/org"))
+(setq org-capture-templates '(("t" "Todo [inbox]" entry
+                               (file+headline "~/org/inbox.org" "Tasks")
+                               "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n")
+                              ("T" "Tickler" entry
+                               (file+headline "~/org/tickler.org" "Tickler")
+                               "* %i%? \n %U"))
+	  )
+;; (define-key global-map "\C-cx"
+;;   (lambda () (interactive) (org-capture nil "x")))
+(setq org-refile-use-outline-path 'file)
+(setq org-refile-targets '(("~/org/gtd.org" :maxlevel . 1)))
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cc" 'org-capture)
+
+
+(use-package org-gcal
+
+  :init
+  (add-hook 'emacs-startup-hook #'org-gcal-fetch)
+  (defun fetch-calendar ()
+    (when (internet-up-p) (org-gcal-fetch)))
+  :config
+  (setq org-gcal-client-id "3200543451-ind1kdbjhb621qt0g9uc7q88lkhckun6.apps.googleusercontent.com"
+      org-gcal-client-secret "2Jf7wCLpviJ7oD8zQdohjJOe"
+      org-gcal-file-alist '(("kinchang0811@gmail.com" .  "~/org/gcal.org")
+                            ("kin.chang@jonajo.com" .  "~/org/jonajo.org")))
+  (add-hook 'org-agenda-mode-hook (lambda () (define-key org-agenda-mode-map "g" 'org-gcal-fetch)))
+			)
+(use-package org-bullets
+  :init
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+;; ===================================================
+;; Angular 2
+;; ===================================================
+;; (use-package ng2-mode)
+;; (use-package tide
+;;   :init
+;;   :ensure t
+;;   :after (typescript-mode company flycheck)
+;;   :hook ((typescript-mode . tide-setup)
+;;          (typescript-mode . tide-hl-identifier-mode)
+;;          (before-save . tide-format-before-save))
+;;   :config
+;;   ;; aligns annotation to the right hand side
+;;   (setq company-tooltip-align-annotations t)
+;;   ;; formats the buffer before saving
+;;   (add-hook 'before-save-hook 'tide-format-before-save)
+;;   )
+;; (defun setup-tide-mode ()
+;;   (interactive)
+;;   (tide-setup)
+;;   (flycheck-mode +1)
+;;   (setq flycheck-check-syntax-automatically '(save mode-enabled))
+;;   (eldoc-mode +1)
+;;   (tide-hl-identifier-mode +1)
+;;   ;; company is an optional dependency. You have to
+;;   ;; install it separately via package-install
+;;   ;; `M-x package-install [ret] company`
+;;   (company-mode +1))
+;; (use-package typescript-mode
+;;   :ensure t
+;;   :config
+;;   (setq typescript-indent-level 4)
+;;   (add-hook 'typescript-mode #'subword-mode)
+;;   (add-hook 'typescript-mode-hook #'setup-tide-mode)
+;;   )
+;; (use-package web-mode
+;;   :ensure t
+;;   :mode (("\\.html?\\'" . web-mode)
+;;          ("\\.tsx\\'" . web-mode)
+;;          ("\\.jsx\\'" . web-mode)
+;; 		 )
+;;   :config
+;;   (setq web-mode-markup-indent-offset 2
+;;         web-mode-css-indent-offset 2
+;;         web-mode-code-indent-offset 2
+;;         web-mode-block-padding 2
+;;         web-mode-comment-style 2
+;;         web-mode-enable-css-colorization t
+;;         web-mode-enable-auto-pairing t
+;;         web-mode-enable-comment-keywords t
+;;         web-mode-enable-current-element-highlight t
+;;         )
+;;   (add-hook 'web-mode-hook
+;;             (lambda ()
+;;               (when (string-equal "tsx" (file-name-extension buffer-file-name))
+;; 				(setup-tide-mode))))
+;;   ;; enable typescript-tslint checker
+;;   (flycheck-add-mode 'typescript-tslint 'web-mode))
+;; ===================================================
+;; React
+;; ===================================================
+;; (use-package rjsx-mode
+;;   :config
+;;   ;; disable jshint since we prefer eslint checking
+;;   (setq-default flycheck-disabled-checkers
+;; 				(append flycheck-disabled-checkers
+;; 						'(javascript-jshint)))
+;;   ;; use eslint with web-mode for jsx files
+;;   (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
+;;   ;; :mode (
+;;   ;; 		 ("\\.js\\'" . rjsx-mode)
+;;   ;; 		 ("\\.jsx\\'" . rjsx-mode)
+;;   ;; 		 ("\\.ts\\'" . rjsx-mode)
+;;   ;; 		 ("\\.tsx\\'" . rjsx-mode)
+;;   ;; 		 )
+;;   )
+(use-package tide
+  :init
+  :ensure t
+  :after (typescript-mode company flycheck)
+  :hook ((typescript-mode . tide-setup)
+         (typescript-mode . tide-hl-identifier-mode)
+         (before-save . tide-format-before-save))
+  :config
+  ;; Format Option
+  (setq tide-format-options '(:indentSize 2))
+  ;; aligns annotation to the right hand side
+  (setq company-tooltip-align-annotations t)
+  ;; formats the buffer before saving
+  (add-hook 'before-save-hook 'tide-format-before-save)
+  )
+  (defun setup-tide-mode ()
+	(interactive)
+	(tide-setup)
+	(flycheck-mode +1)
+	(setq flycheck-check-syntax-automatically '(save mode-enabled))
+	(eldoc-mode +1)
+	(tide-hl-identifier-mode +1)
+	;; company is an optional dependency. You have to
+	;; install it separately via package-install
+	;; `M-x package-install [ret] company`
+	(company-mode +1))
+(use-package web-mode
+  :ensure t
+  :mode (("\\.html?\\'" . web-mode)
+         ("\\.tsx\\'" . web-mode)
+         ("\\.jsx\\'" . web-mode)
+		 )
+  :config
+  (setq web-mode-markup-indent-offset 2
+        web-mode-css-indent-offset 2
+        web-mode-code-indent-offset 2
+        web-mode-block-padding 2
+        web-mode-comment-style 2
+        web-mode-enable-css-colorization t
+        web-mode-enable-auto-pairing t
+        web-mode-enable-comment-keywords t
+        web-mode-enable-current-element-highlight t
+        )
+  (add-hook 'web-mode-hook
+            (lambda ()
+              (when (string-equal "tsx" (file-name-extension buffer-file-name))
+				(setup-tide-mode))))
+  ;; enable typescript-tslint checker
+  (flycheck-add-mode 'typescript-tslint 'web-mode))
+(use-package typescript-mode
+  :ensure t
+  :config
+  (setq typescript-indent-level 2)
+  (add-hook 'typescript-mode #'subword-mode)
+  (add-hook 'typescript-mode-hook #'setup-tide-mode)
+  )
+
+;; ===================================================
 ;; WEB DEVELPMENT
 ;; ===================================================
-(use-package js2-mode
-  :config
-  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-  (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
-  :hook  ((js2-mode . js2-refactor-mode)
-		  (js2-mode . tern-mode)
-		  )
-  )
-(use-package rjsx-mode
-  :config
-  (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
-  )
-(use-package js2-refactor
-  :config
-  (js2r-add-keybindings-with-prefix "C-c C-r")
-  )
+;; (use-package js2-mode
+;;   :config
+;;   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+;;   (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
+;;   :hook  ((js2-mode . js2-refactor-mode)
+;; 		  (js2-mode . tern-mode)
+;; 		  )
+;;   )
+
 
 ;; (use-package web-mode
 ;;   :config
@@ -291,10 +473,11 @@
  '(flycheck-color-mode-line-face-to-color (quote mode-line-buffer-id))
  '(frame-background-mode (quote dark))
  '(indent-tabs-mode t)
+ '(org-agenda-files (quote ("~/org")))
  '(org-icalendar-include-todo (quote all))
  '(package-selected-packages
    (quote
-	(powerline powerline-evil sml-mode pdf-tools auctex)))
+	(org-bullets vi-tilde-fringe-mode evil-surround web-mode powerline powerline-evil sml-mode pdf-tools auctex)))
  '(pdf-view-incompatible-modes nil)
  '(sml/mode-width
    (if
