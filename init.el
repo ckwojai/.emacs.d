@@ -162,19 +162,9 @@
         '(:eval (format " Projectile[%s]"
                         (projectile-project-name))))
   )
-(use-package tramp
-  :config
-  (custom-set-variables
-   '(tramp-default-method "ssh" nil (tramp))
-   '(tramp-default-user "kinc" nil (tramp))
-   '(tramp-default-host "192.241.224.44" nil (tramp)))
-  )
 ;; ===================================================
-;; HOOKING UTILITIES
+;; hooking utilities
 ;; ===================================================
-(use-package ggtags
-  :hook ((js-mode python-mode c++-mode) . ggtags-mode)
-  )
 (use-package flyspell
   :hook ((org-mode) . flyspell-mode)
   )
@@ -188,118 +178,13 @@
   (show-smartparens-global-mode)
   :hook ((js-mode python-mode c++-mode TeX-mode) . smartparens-mode)
   )
-;; ===================================================
-;; Org TODO and Agneda
-;; ===================================================
-(setq org-agenda-files (list "~/org"))
-(setq org-capture-templates '(("t" "Todo [inbox]" entry
-                               (file+headline "~/org/inbox.org" "Tasks")
-                               "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n")
-                              ("T" "Tickler" entry
-                               (file+headline "~/org/tickler.org" "Tickler")
-                               "* %i%? \n %U"))
-	  )
-;; (define-key global-map "\C-cx"
-;;   (lambda () (interactive) (org-capture nil "x")))
-(setq org-refile-use-outline-path 'file)
-(setq org-refile-targets '(("~/org/gtd.org" :maxlevel . 1)))
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cc" 'org-capture)
-
-
-(use-package org-gcal
-
-  :init
-  (add-hook 'emacs-startup-hook #'org-gcal-fetch)
-  (defun fetch-calendar ()
-    (when (internet-up-p) (org-gcal-fetch)))
-  :config
-  (setq org-gcal-client-id "3200543451-ind1kdbjhb621qt0g9uc7q88lkhckun6.apps.googleusercontent.com"
-      org-gcal-client-secret "2Jf7wCLpviJ7oD8zQdohjJOe"
-      org-gcal-file-alist '(("kinchang0811@gmail.com" .  "~/org/gcal.org")
-                            ("kin.chang@jonajo.com" .  "~/org/jonajo.org")))
-  (add-hook 'org-agenda-mode-hook (lambda () (define-key org-agenda-mode-map "g" 'org-gcal-fetch)))
-			)
 (use-package org-bullets
   :init
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
 ;; ===================================================
-;; Angular 2
+;; React + Angular Set Up 
 ;; ===================================================
-;; (use-package ng2-mode)
-;; (use-package tide
-;;   :init
-;;   :ensure t
-;;   :after (typescript-mode company flycheck)
-;;   :hook ((typescript-mode . tide-setup)
-;;          (typescript-mode . tide-hl-identifier-mode)
-;;          (before-save . tide-format-before-save))
-;;   :config
-;;   ;; aligns annotation to the right hand side
-;;   (setq company-tooltip-align-annotations t)
-;;   ;; formats the buffer before saving
-;;   (add-hook 'before-save-hook 'tide-format-before-save)
-;;   )
-;; (defun setup-tide-mode ()
-;;   (interactive)
-;;   (tide-setup)
-;;   (flycheck-mode +1)
-;;   (setq flycheck-check-syntax-automatically '(save mode-enabled))
-;;   (eldoc-mode +1)
-;;   (tide-hl-identifier-mode +1)
-;;   ;; company is an optional dependency. You have to
-;;   ;; install it separately via package-install
-;;   ;; `M-x package-install [ret] company`
-;;   (company-mode +1))
-;; (use-package typescript-mode
-;;   :ensure t
-;;   :config
-;;   (setq typescript-indent-level 4)
-;;   (add-hook 'typescript-mode #'subword-mode)
-;;   (add-hook 'typescript-mode-hook #'setup-tide-mode)
-;;   )
-;; (use-package web-mode
-;;   :ensure t
-;;   :mode (("\\.html?\\'" . web-mode)
-;;          ("\\.tsx\\'" . web-mode)
-;;          ("\\.jsx\\'" . web-mode)
-;; 		 )
-;;   :config
-;;   (setq web-mode-markup-indent-offset 2
-;;         web-mode-css-indent-offset 2
-;;         web-mode-code-indent-offset 2
-;;         web-mode-block-padding 2
-;;         web-mode-comment-style 2
-;;         web-mode-enable-css-colorization t
-;;         web-mode-enable-auto-pairing t
-;;         web-mode-enable-comment-keywords t
-;;         web-mode-enable-current-element-highlight t
-;;         )
-;;   (add-hook 'web-mode-hook
-;;             (lambda ()
-;;               (when (string-equal "tsx" (file-name-extension buffer-file-name))
-;; 				(setup-tide-mode))))
-;;   ;; enable typescript-tslint checker
-;;   (flycheck-add-mode 'typescript-tslint 'web-mode))
-;; ===================================================
-;; React
-;; ===================================================
-;; (use-package rjsx-mode
-;;   :config
-;;   ;; disable jshint since we prefer eslint checking
-;;   (setq-default flycheck-disabled-checkers
-;; 				(append flycheck-disabled-checkers
-;; 						'(javascript-jshint)))
-;;   ;; use eslint with web-mode for jsx files
-;;   (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
-;;   ;; :mode (
-;;   ;; 		 ("\\.js\\'" . rjsx-mode)
-;;   ;; 		 ("\\.jsx\\'" . rjsx-mode)
-;;   ;; 		 ("\\.ts\\'" . rjsx-mode)
-;;   ;; 		 ("\\.tsx\\'" . rjsx-mode)
-;;   ;; 		 )
-;;   )
 (use-package tide
   :init
   :ensure t
@@ -358,36 +243,8 @@
   )
 
 ;; ===================================================
-;; WEB DEVELPMENT
-;; ===================================================
-;; (use-package js2-mode
-;;   :config
-;;   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-;;   (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
-;;   :hook  ((js2-mode . js2-refactor-mode)
-;; 		  (js2-mode . tern-mode)
-;; 		  )
-;;   )
-
-
-;; (use-package web-mode
-;;   :config
-;;   (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-;;   (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-;;   (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
-;;   (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-;;   (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-;;   (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-;;   (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-;;   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-;;   (add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . web-mode))  
-;;   (setq web-mode-content-types-alist
-;;   		'(("jsx" . "\\.js[x]?\\'")))  
-;;   )
-;; ===================================================
 ;; PYTHON
 ;; ===================================================
-
 (use-package elpy
   :config
   (elpy-enable)
@@ -400,56 +257,28 @@
 (use-package ox-reveal
   )
 ;; ===================================================
-;; osx-dictionary
-;; ===================================================
-(use-package osx-dictionary
-  :config
-  (global-set-key (kbd "C-c d") 'osx-dictionary-search-word-at-point)
-  )
-
-;; ===================================================
 ;; LaTeX
 ;; ===================================================
-(use-package tex
-  :ensure auctex
-  )
+;; (use-package tex
+;;   :ensure auctex
+;;   )
 ;; (use-package pdf-tools
 ;;   :config
 ;;   (pdf-tools-install)
 ;;   )
-(use-package auctex-latexmk
-  :config
-  (auctex-latexmk-setup)
-  (add-hook 'TeX-after-compilation-finished-functions 'TeX-revert-document-buffer)
-  (add-hook 'TeX-mode-hook '(lambda () (pdf-tools-install)))  
-  (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-Show "LatexMk")))
-  (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "LatexMk")))
+;; (use-package auctex-latexmk
+;;   :config
+;;   (auctex-latexmk-setup)
+;;   (add-hook 'TeX-after-compilation-finished-functions 'TeX-revert-document-buffer)
+;;   (add-hook 'TeX-mode-hook '(lambda () (pdf-tools-install)))  
+;;   (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-Show "LatexMk")))
+;;   (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "LatexMk")))
   
-  (setq TeX-view-program-selection '((output-pdf "pdf-tools"))
-  		TeX-source-correlate-start-server t)
-  (setq TeX-source-correlate-mode t)
-  (setq TeX-view-program-list '(("pdf-tools" "TeX-pdf-tools-sync-view")))
-  (setq auctex-latexmk-inherit-TeX-PDF-mode t)
-  )
-;; ===================================================
-;; BackUp Code
-;; ===================================================
-;; (use-package org
-;;   :config
-;;   (setq org-directory "~/Dropbox/org")
-;;   (setq org-mobile-inbox-for-pull "~/Dropbox/org/inbox.org")
-;;   (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
-;;   (setq org-mobile-files '("~/Dropbox/org"))
-;;   (setq org-mobile-force-id-on-agenda-items nil)
-;; )
-;; (use-package doom-themes
-;;   :config
-;;   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-;; 	doom-themes-enable-italic t) ; if nil, italics is universally disabled
-;;   (load-theme 'doom-one t)
-;;   (doom-themes-visual-bell-config)
-;;   (doom-themes-neotree-config)  ; all-the-icons fonts must be installed!
-;;   (doom-themes-org-config)
+;;   (setq TeX-view-program-selection '((output-pdf "pdf-tools"))
+;;   		TeX-source-correlate-start-server t)
+;;   (setq TeX-source-correlate-mode t)
+;;   (setq TeX-view-program-list '(("pdf-tools" "TeX-pdf-tools-sync-view")))
+;;   (setq auctex-latexmk-inherit-TeX-PDF-mode t)
 ;;   )
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
